@@ -1,26 +1,288 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --text-color-primary: rgb(83, 105, 79);
+  --text-color-secondary: #808080;
+  --background-color: rgb(255, 255, 255);
+  --background-grid-color: rgba(81, 102, 77, 0.3);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  background-image: linear-gradient(to right, rgba(47, 91, 54, 0.1) 1px, transparent 1px);
+  background-size: calc(100% / 12) 100%;
+  background-repeat: repeat-x;
+  min-height: 100vh;
+  font-family: var(--font-romRegular), sans-serif;
+  font-weight: 500;
+  font-size: 0.88rem;
+  background-color: var(--background-color);
+  color: var(--text-color-primary);
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h4 {
+  color: var(--text-color-secondary);
+}
+
+/* Component: Navbar */
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  padding-top: 1rem;
+}
+
+.nav-logo, .nav-link-item {
+  /* padding-left: 0.5rem; */
+}
+
+.nav-logo {
+  grid-column: 1 / 3;
+  padding-left: 1rem;
+  /* border: 1px solid red; */
+}
+
+.nav-link-item {
+  grid-column: span 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-language {
+  grid-column: 12;
+  justify-self: end;
+  padding-right: 1rem;
+}
+
+/* Homepage */
+
+.homepage-container {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+}
+
+.homepage-current-exhibition-container {
+  grid-column: 4 / 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.homepage-current-exhibition-text {
+  padding-top: 1rem;
+}
+
+.homepage-exhibition-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* Exhibitions List Page */
+
+.exhibitions-list-container {
+  grid-column: 1 / -1;
+  /* grid-row: 2; */
+  margin-top: 8rem;
+  display: flex;
+  flex-direction: column;
+  /* grid-template-columns: repeat(12, 1fr); */
+}
+
+.exhibitions-list-item {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+}
+
+.exhibitions-list-item .year {
+  grid-column: 2 / 4;
+}
+
+.exhibitions-list-item .title {
+  grid-column: 4 / 11;
+}
+
+.exhibitions-list-item .date {
+  grid-column: 11 / -1;
+}
+
+/* Exhibitions Detail Page */
+
+.exhibition-detail-container {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  padding-top: 1rem;
+}
+
+.exhibition-detail-title-container {
+  grid-column: 2 / 7;
+  margin-top: 8rem;
+}
+
+.exhibition-detail-date {
+  font-size: 1.8rem;
+  font-family: var(--font-romRegularItalic), sans-serif;
+}
+
+.exhibition-detail-description {
+  grid-column: 7 / 12;
+  padding-top: 8rem;
+  padding-right: 1rem;
+}
+
+.exhibition-detail-description p:not(:first-child) {
+  text-indent: 3rem;
+}
+
+.exhibition-images {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 4rem;
+}
+
+.exhibition-image {
+  height: auto;
+  object-fit: cover;
+  image-rendering: high-quality;
+  /* border: 1px solid blue; */
+}
+
+.exhibition-image-container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: auto auto;
+  width: 100%;
+  margin-bottom: 8rem;
+  /* border: 1px solid red; */
+}
+
+/* Alternating layout: left, center, right, repeat */
+.exhibition-image-container:nth-child(3n+1) .exhibition-image-horizontal {
+  grid-column: 1 / 9;
+  grid-row: 1;
+  justify-self: start;
+}
+
+.exhibition-image-container:nth-child(3n+1) .exhibition-image-caption {
+  grid-column: 1 / 9;
+  grid-row: 2;
+  justify-self: start;
+}
+
+.exhibition-image-container:nth-child(3n+2) .exhibition-image-horizontal {
+  grid-column: 5 / 13;
+  grid-row: 1;
+  justify-self: start;
+}
+
+.exhibition-image-container:nth-child(3n+2) .exhibition-image-caption {
+  grid-column: 5 / 13;
+  grid-row: 2;
+  justify-self: start;
+}
+
+.exhibition-image-container:nth-child(3n+3) .exhibition-image-horizontal {
+  grid-column: 3 / 11;
+  grid-row: 1;
+  justify-self: start;
+}
+
+.exhibition-image-container:nth-child(3n+3) .exhibition-image-caption {
+  grid-column: 3 / 11;
+  grid-row: 2;
+  justify-self: start;
+}
+
+/* Vertical and horizontal image styling within containers */
+.exhibition-image-vertical {
+  /* Vertical images always take 4 columns regardless of position */
+  grid-column: span 4;
+  object-fit: cover;
+}
+
+.exhibition-image-horizontal {
+  /* Horizontal images can have different styling if needed */
+  /* max-height: 400px; */
+  object-fit: cover;
+}
+
+/* Vertical images positioning */
+.exhibition-image-container:nth-child(3n+1).has-vertical-image .exhibition-image-vertical {
+  grid-column: 1 / 5;
+  justify-self: start;
+}
+
+.exhibition-image-container:nth-child(3n+2).has-vertical-image .exhibition-image-vertical {
+  grid-column: 5 / 9;
+  justify-self: center;
+}
+
+.exhibition-image-container:nth-child(3n+3).has-vertical-image .exhibition-image-vertical {
+  grid-column: 9 / 13;
+  justify-self: end;
+}
+
+/* Vertical image captions - always align with left edge of image */
+.exhibition-image-container:nth-child(3n+1).has-vertical-image .exhibition-image-caption {
+  grid-column: 1 / 5;
+  justify-self: start;
+}
+
+.exhibition-image-container:nth-child(3n+2).has-vertical-image .exhibition-image-caption {
+  grid-column: 5 / 9;
+  justify-self: start;
+}
+
+.exhibition-image-container:nth-child(3n+3).has-vertical-image .exhibition-image-caption {
+  grid-column: 9 / 13;
+  justify-self: start;
+}
+
+.exhibition-image-caption {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+}
+
+
+/* Info Page */
+
+.info-contact {
+  display: flex;
+  flex-direction: column;
+  grid-column: 8 / -1;
+  grid-row: 1 / 2;
+}
+
+.info-image {
+  grid-column: 2 / 6;
+  grid-row: 2;
+  width: 100%;
+  height: auto;
+  display: block; /* Removes any inline spacing issues */
+}
+
+.info-text {
+  grid-column: 7 / 12;
+  grid-row: 2;
 }

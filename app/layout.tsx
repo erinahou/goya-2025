@@ -1,15 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+import Navbar from "./components/Navbar";
+
+const romRegular = localFont({
+  src: "../public/ABCROM-Regular-Trial.woff2",
+  variable: "--font-romRegular",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const romRegularItalic = localFont({
+  src: "../public/ABCROM-RegularItalic-Trial.woff2",
+  variable: "--font-romRegularItalic",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -24,9 +28,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${romRegular.variable} ${romRegularItalic.variable} antialiased`}>
+        <Navbar />
         {children}
       </body>
     </html>
