@@ -63,7 +63,7 @@ export default async function ArchivesPage() {
       </div>
       {archiveImages.length > 0 && (
         <div className="exhibition-images">
-          {archiveImages.map((img, index) => (
+          {archiveImages.map((img: any, index: number) => (
             <div key={index}
             className={`exhibition-image-container ${img.isVertical ? 'has-vertical-image' : ''}`}>
               <Image

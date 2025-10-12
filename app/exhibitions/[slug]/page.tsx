@@ -130,7 +130,7 @@ export default async function ExhibitionDetailPage({
       </div>
       {exhibitionImages.length > 0 && (
         <div className="exhibition-images">
-          {exhibitionImages.map((img, index) => (
+          {exhibitionImages.map((img: any, index: number) => (
             <div key={index}
             className={`exhibition-image-container ${img.isVertical ? 'has-vertical-image' : ''}`}>
               <Image
