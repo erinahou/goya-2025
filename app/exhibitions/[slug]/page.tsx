@@ -11,6 +11,14 @@ const EXHIBITION_QUERY = `*[_type == "exhibition" && slug.current == $slug][0] {
   titleJa,
   startDate,
   endDate,
+  artistsEn[]{
+    name,
+    description
+  },
+  artistsJa[]{
+    name,
+    description
+  },
   images[]{
     captionEn,
     image{
@@ -121,12 +129,28 @@ export default async function ExhibitionDetailPage({
     <main className="exhibition-detail-container">
       <div className="exhibition-detail-title-container">
         <h1>{exhibition.titleEn}</h1>
-        <p className="exhibition-detail-date">
+        <h2 className="exhibition-detail-date">
           {formatExhibitionDates(exhibition.startDate, exhibition.endDate)}
-        </p>
+        </h2>
       </div>
-      <div className="exhibition-detail-description">
-        <PortableText value={exhibition.descriptionEn} />
+        <div className="exhibition-detail-description">
+          <div className="exhibition-about">
+            <PortableText value={exhibition.descriptionEn} />
+          </div>
+        {exhibition.artistsEn && exhibition.artistsEn.length > 0 && exhibition.artistsEn.some((artist: any) => artist.description) && (
+          <div className="exhibition-artists">
+            <h4>About the artist</h4>
+            {exhibition.artistsEn.map((artist: any, index: number) => (
+              <div key={index} className="artist-info">
+                  {artist.description && (
+                    <p key={index} className="artist-description">
+                      {artist.description}
+                    </p>
+                  )}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       {exhibitionImages.length > 0 && (
         <div className="exhibition-images">
