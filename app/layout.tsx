@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 
 import Navbar from "./components/Navbar";
+import { LanguageProvider } from "./contexts/LanguageContext";
 
 const romRegular = localFont({
   src: "../public/ABCROM-Regular-Trial.woff2",
@@ -13,6 +15,12 @@ const romRegular = localFont({
 const romRegularItalic = localFont({
   src: "../public/ABCROM-RegularItalic-Trial.woff2",
   variable: "--font-romRegularItalic",
+  display: "swap",
+});
+
+const notoSansJP = Noto_Sans_JP({
+  subsets: ["latin"],
+  variable: "--font-notoSansJP",
   display: "swap",
 });
 
@@ -28,9 +36,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${romRegular.variable} ${romRegularItalic.variable} antialiased`}>
-        <Navbar />
-        {children}
+      <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/yakuhanjp@4.1.1/dist/css/yakuhanjp.css" />
+      </head>
+      <body className={`${romRegular.variable} ${romRegularItalic.variable} ${notoSansJP.variable} antialiased`}>
+        <LanguageProvider>
+          <Navbar />
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

@@ -7,6 +7,26 @@
   --background-grid-color: rgba(81, 102, 77, 0.3);
 }
 
+/* Font classes */
+.font-english {
+  font-family: var(--font-romRegular), sans-serif;
+}
+
+.font-japanese {
+  font-family: YakuHanJP, "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  font-weight: 400;
+}
+
+/* Ensure Japanese font is applied to all child elements */
+.font-japanese * {
+  font-family: inherit;
+}
+
+/* Override for English segments within Japanese content */
+.font-japanese .font-english {
+  font-family: var(--font-romRegular), sans-serif;
+}
+
 body {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -68,6 +88,29 @@ nav {
   grid-column: 12;
   justify-self: end;
   padding-right: 1rem;
+  gap: 0.5rem;
+}
+
+.nav-language button {
+  background: none;
+  border: none;
+  color: var(--text-color-primary);
+  font-family: var(--font-romRegular), sans-serif;
+  cursor: pointer;
+  padding: 0 0.35rem;
+  transition: opacity 0.2s ease;
+}
+
+.nav-language button:hover {
+  opacity: 0.7;
+}
+
+.nav-language button.active {
+  opacity: 1;
+}
+
+.nav-language button:not(.active) {
+  opacity: 0.5;
 }
 
 /* Homepage */

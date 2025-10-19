@@ -4,6 +4,7 @@ import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import Image from "next/image";
 // import { type SanityDocument } from "next-sanity";
 import { client } from "@/sanity/client";
+import { LanguageContent } from "../../components/LanguageContent";
 
 const EXHIBITION_QUERY = `*[_type == "exhibition" && slug.current == $slug][0] {
   _id,
@@ -128,29 +129,63 @@ export default async function ExhibitionDetailPage({
   return (
     <main className="exhibition-detail-container">
       <div className="exhibition-detail-title-container">
-        <h1>{exhibition.titleEn}</h1>
+        <h1>
+          <LanguageContent
+            en={exhibition.titleEn}
+            jp={exhibition.titleJa}
+            mixedLanguage={true}
+          />
+        </h1>
         <h2 className="exhibition-detail-date">
           {formatExhibitionDates(exhibition.startDate, exhibition.endDate)}
         </h2>
       </div>
         <div className="exhibition-detail-description">
           <div className="exhibition-about">
-            <PortableText value={exhibition.descriptionEn} />
+            <LanguageContent
+              en={<PortableText value={exhibition.descriptionEn} />}
+              jp={<PortableText value={exhibition.descriptionJa} />}
+              mixedLanguage={true}
+            />
           </div>
-        {exhibition.artistsEn && exhibition.artistsEn.length > 0 && exhibition.artistsEn.some((artist: any) => artist.description) && (
-          <div className="exhibition-artists">
-            <h4>About the artist</h4>
-            {exhibition.artistsEn.map((artist: any, index: number) => (
-              <div key={index} className="artist-info">
-                  {artist.description && (
-                    <p key={index} className="artist-description">
-                      {artist.description}
-                    </p>
-                  )}
+        <LanguageContent
+          en={
+            exhibition.artistsEn && exhibition.artistsEn.length > 0 && exhibition.artistsEn.some((artist: any) => artist.description) && (
+              <div className="exhibition-artists">
+                <h4>About the artist</h4>
+                {exhibition.artistsEn.map((artist: any, index: number) => (
+                  <div key={index} className="artist-info">
+                      {artist.description && (
+                        <p key={index} className="artist-description">
+                          {artist.description}
+                        </p>
+                      )}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+            )
+          }
+          jp={
+            exhibition.artistsJa && exhibition.artistsJa.length > 0 && exhibition.artistsJa.some((artist: any) => artist.description) && (
+              <div className="exhibition-artists">
+                <h4>アーティストについて</h4>
+                {exhibition.artistsJa.map((artist: any, index: number) => (
+                  <div key={index} className="artist-info">
+                      {artist.description && (
+                        <p key={index} className="artist-description">
+                          <LanguageContent
+                            en={artist.description}
+                            jp={artist.description}
+                            mixedLanguage={true}
+                          />
+                        </p>
+                      )}
+                  </div>
+                ))}
+              </div>
+            )
+          }
+        />
       </div>
       {exhibitionImages.length > 0 && (
         <div className="exhibition-images">
