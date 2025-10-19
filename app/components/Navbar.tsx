@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export default function Navbar() {
   const [isMobile, setIsMobile] = useState(false);
+  const { language, setLanguage } = useLanguage();
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -49,9 +51,20 @@ export default function Navbar() {
         </>
       )}
 
-      <Link href="/" className="nav-language">
-        EN/JP
-      </Link>
+      <div className="nav-language">
+        <button
+          onClick={() => setLanguage('en')}
+          className={language === 'en' ? 'active' : ''}
+        >
+          EN
+        </button>
+        <button
+          onClick={() => setLanguage('jp')}
+          className={language === 'jp' ? 'active' : ''}
+        >
+          JP
+        </button>
+      </div>
     </nav>
   );
 }
