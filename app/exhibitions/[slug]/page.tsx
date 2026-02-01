@@ -12,6 +12,7 @@ const EXHIBITION_QUERY = `*[_type == "exhibition" && slug.current == $slug][0] {
   titleJa,
   startDate,
   endDate,
+  dontDisplayTitle,
   artistsEn[]{
     name,
     description
@@ -126,20 +127,57 @@ export default async function ExhibitionDetailPage({
 
   console.log(exhibitionImages);
 
+  // Helper function to format artist names with "and" between last two (English)
+  function formatArtistNamesEn(names: string[]): string {
+    if (!names || names.length === 0) return '';
+    if (names.length === 1) return names[0];
+    if (names.length === 2) return `${names[0]} and ${names[1]}`;
+    const allButLast = names.slice(0, -1).join(', ');
+    return `${allButLast} and ${names[names.length - 1]}`;
+  }
+
+  // Helper function to format artist names with "と" between last two (Japanese)
+  function formatArtistNamesJa(names: string[]): string {
+    if (!names || names.length === 0) return '';
+    if (names.length === 1) return names[0];
+    if (names.length === 2) return `${names[0]}と${names[1]}`;
+    const allButLast = names.slice(0, -1).join('、');
+    return `${allButLast}と${names[names.length - 1]}`;
+  }
+
+  // Format all artist names
+  const artistEnNamesArray = exhibition.artistsEn?.map((artist: any) => artist.name) || [];
+  const artistJaNamesArray = exhibition.artistsJa?.map((artist: any) => artist.name) || [];
+  const artistsEnNames = formatArtistNamesEn(artistEnNamesArray);
+  const artistsJaNames = formatArtistNamesJa(artistJaNamesArray);
+
   return (
     <main className="exhibition-detail-container">
-      <div className="exhibition-detail-title-container">
-        <h1>
-          <LanguageContent
-            en={exhibition.titleEn}
-            jp={exhibition.titleJa}
-            mixedLanguage={true}
-          />
-        </h1>
-        <h2 className="exhibition-detail-date">
-          {formatExhibitionDates(exhibition.startDate, exhibition.endDate)}
-        </h2>
-      </div>
+        <div className="exhibition-detail-title-container">
+          <h1>
+            <LanguageContent
+              en={artistsEnNames}
+              jp={artistsJaNames}
+              mixedLanguage={true}
+            />
+            {!exhibition.dontDisplayTitle && (
+              <>:&nbsp;</>
+            )}
+          </h1>
+          {!exhibition.dontDisplayTitle && (
+            <h1>
+              <LanguageContent
+                en={exhibition.titleEn}
+                jp={exhibition.titleJa}
+                mixedLanguage={true}
+                className="italic"
+              />
+            </h1>
+          )}
+          <h3 className="exhibition-detail-date">
+            {formatExhibitionDates(exhibition.startDate, exhibition.endDate)}
+          </h3>
+        </div>
         <div className="exhibition-detail-description">
           <div className="exhibition-about">
             <LanguageContent
@@ -148,6 +186,27 @@ export default async function ExhibitionDetailPage({
               mixedLanguage={true}
             />
           </div>
+      </div>
+      {exhibitionImages.length > 0 && (
+        <div className="exhibition-images">
+          {exhibitionImages.map((img: any, index: number) => (
+            <div key={index}
+            className={`exhibition-image-container ${img.isVertical ? 'has-vertical-image' : ''}`}>
+              <Image
+                src={img.src}
+                alt={img.alt}
+                width={img.width}
+                height={img.height}
+                className={`exhibition-image ${img.isVertical ? 'exhibition-image-vertical' : 'exhibition-image-horizontal'}`}
+              />
+              {img.captionEn && (
+                <p className="exhibition-image-caption">{img.captionEn}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      <div className="exhibition-about-artists-container">
         <LanguageContent
           en={
             exhibition.artistsEn && exhibition.artistsEn.length > 0 && exhibition.artistsEn.some((artist: any) => artist.description) && (
@@ -187,25 +246,6 @@ export default async function ExhibitionDetailPage({
           }
         />
       </div>
-      {exhibitionImages.length > 0 && (
-        <div className="exhibition-images">
-          {exhibitionImages.map((img: any, index: number) => (
-            <div key={index}
-            className={`exhibition-image-container ${img.isVertical ? 'has-vertical-image' : ''}`}>
-              <Image
-                src={img.src}
-                alt={img.alt}
-                width={img.width}
-                height={img.height}
-                className={`exhibition-image ${img.isVertical ? 'exhibition-image-vertical' : 'exhibition-image-horizontal'}`}
-              />
-              {img.captionEn && (
-                <p className="exhibition-image-caption">{img.captionEn}</p>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
     </main>
   );
 }

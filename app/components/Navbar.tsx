@@ -42,12 +42,13 @@ export default function Navbar() {
         <>
           <div className="nav-link-item">
             <Link href="/exhibitions">Exhibitions</Link>
-            <Link href="/info">Info</Link>
+            <Link href="/35mm-archives">35mm archives</Link>
+            <Link href="/info">Information</Link>
           </div>
-          <div className="nav-link-item">
+          {/* <div className="nav-link-item">
             <Link href="/35mm-archives">35mm archives</Link>
             <Link href="/">Subscribe</Link>
-          </div>
+          </div> */}
         </>
       )}
 
