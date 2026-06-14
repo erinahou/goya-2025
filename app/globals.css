@@ -30,15 +30,27 @@
 body {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  background-image: linear-gradient(to right, rgba(47, 91, 54, 0.1) 1px, transparent 1px);
-  background-size: calc(100% / 4) 100%;
-  background-repeat: repeat-x;
   min-height: 100vh;
   font-family: var(--font-romRegular), sans-serif;
   font-weight: 500;
   font-size: 0.88rem;
   background-color: var(--background-color);
   color: var(--text-color-primary);
+}
+
+.page-grid-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: linear-gradient(to right, rgba(47, 91, 54, 0.1) 1px, transparent 1px);
+  background-size: calc(100% / 4) 100%;
+  background-repeat: repeat-x;
+}
+
+body > :not(.page-grid-background):not(nav):not(.nav-scroll-blur):not(.info-overlay):not(.image-carousel) {
+  position: relative;
+  z-index: 1;
 }
 
 h1 {
@@ -48,6 +60,7 @@ h1 {
 
 h2 {
   font-size: 1.75rem;
+  line-height: 1.2;
 }
 
 h3 {
@@ -64,6 +77,32 @@ h4 {
 
 /* Component: Navbar */
 
+.nav-scroll-blur {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 8rem;
+  z-index: 999;
+  pointer-events: none;
+  transform: translateZ(0);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  background: linear-gradient(
+    to bottom,
+    rgba(254, 251, 240, 0.72) 0%,
+    rgba(254, 251, 240, 0.58) 35%,
+    rgba(254, 251, 240, 0.34) 60%,
+    rgba(254, 251, 240, 0.12) 82%,
+    rgba(254, 251, 240, 0) 100%
+  );
+}
+
+body.image-carousel-open .nav-scroll-blur,
+body.info-overlay-open .nav-scroll-blur {
+  display: none;
+}
+
 nav {
   position: fixed;
   top: 0;
@@ -73,7 +112,12 @@ nav {
   grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  padding-top: 1rem;
+  padding: 1rem 0;
+  background-color: transparent;
+}
+
+body.image-carousel-open nav {
+  display: none;
 }
 
 
@@ -96,7 +140,7 @@ nav {
   gap: 0.5rem;
 }
 
-.nav-language button {
+.nav-language button:not(.nav-close-button) {
   background: none;
   border: none;
   color: var(--text-color-primary);
@@ -106,7 +150,11 @@ nav {
   transition: opacity 0.2s ease;
 }
 
-.nav-language button:hover {
+.nav-language button:not(.nav-close-button) + button:not(.nav-close-button) {
+  padding-left: 0;
+}
+
+.nav-language button:not(.nav-close-button):hover {
   opacity: 0.7;
 }
 
@@ -114,8 +162,27 @@ nav {
   opacity: 1;
 }
 
-.nav-language button:not(.active) {
+.nav-language button:not(.active):not(.nav-close-button) {
   opacity: 0.5;
+}
+
+.nav-close-button,
+.image-carousel-close {
+  border: none;
+  background: none;
+  color: var(--text-color-primary);
+  font-family: var(--font-romRegular), sans-serif;
+  font-size: inherit;
+  font-weight: inherit;
+  cursor: pointer;
+  padding: 0;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.nav-close-button:hover,
+.image-carousel-close:hover {
+  opacity: 0.7;
 }
 
 /* Homepage */
@@ -146,18 +213,26 @@ nav {
 
 /* Exhibitions List Page */
 
-.exhibitions-list-container {
+.exhibitions-list-page {
   grid-column: 1 / -1;
-  /* grid-row: 2; */
+  padding-bottom: 12rem;
+}
+
+.exhibitions-list-container {
   margin-top: 8rem;
   display: flex;
   flex-direction: column;
-  /* grid-template-columns: repeat(12, 1fr); */
+  gap: 16px;
 }
 
-/* .exhibitions-list-item-wrapper {
-  position: relative;
-} */
+.exhibitions-list-item-wrapper {
+  transition: opacity 0.4s ease;
+}
+
+.exhibitions-list-container:has(.exhibitions-list-item-wrapper:hover)
+  .exhibitions-list-item-wrapper:not(:hover) {
+  opacity: 0.45;
+}
 
 .exhibitions-list-item {
   display: grid;
@@ -175,28 +250,21 @@ nav {
   padding-right: 2rem;
 }
 
-/* .exhibitions-list-item .date {
-  grid-column: 11 / -1;
-} */
-
-.exhibitions-list-thumbnail {
-  grid-column: 10 / -1;
-  height: 0px;
-  /* top: 50%;
-  right: 100%;
-  transform: translateY(-50%);
-  margin-left: 2rem; */
+.exhibitions-list-thumbnail-slot {
+  position: fixed;
+  top: 8rem;
+  left: calc(100% * 9 / 12);
+  width: calc(100% * 3 / 12);
+  padding: 0 1rem 0 0;
+  box-sizing: border-box;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease;
-  z-index: 10;
-  width: 100%;
-  /* max-width: 90vw; */
+  transition: opacity 0.6s ease;
+  z-index: 2;
 }
 
-.exhibitions-list-item-wrapper:hover .exhibitions-list-thumbnail {
+.exhibitions-list-thumbnail-slot.is-visible {
   opacity: 1;
-  background-color: brown;
 }
 
 .exhibitions-list-thumbnail-image {
@@ -204,6 +272,31 @@ nav {
   height: auto;
   object-fit: cover;
   display: block;
+  animation: exhibitions-thumbnail-fade-in 0.6s ease;
+}
+
+@keyframes exhibitions-thumbnail-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .exhibitions-list-thumbnail-slot {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exhibitions-list-thumbnail-slot,
+  .exhibitions-list-thumbnail-image {
+    transition: none;
+    animation: none;
+  }
 }
 
 /* Exhibitions Detail Page */
@@ -228,7 +321,7 @@ nav {
 
 .exhibition-detail-date {
   font-family: var(--font-romRegular), sans-serif;
-  padding-top: 0.75rem;
+  padding-top: 24px;
 }
 
 .exhibition-detail-description {
@@ -255,14 +348,27 @@ nav {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  margin-top: 4rem;
+  margin-top: 80px;
 }
 
 .exhibition-image {
+  width: 100%;
   height: auto;
   object-fit: cover;
   image-rendering: high-quality;
-  /* border: 1px solid blue; */
+  display: block;
+}
+
+.exhibition-image-button {
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.exhibition-image-button:hover {
+  opacity: 0.92;
 }
 
 .exhibition-image-container {
@@ -314,46 +420,19 @@ nav {
 
 /* Vertical and horizontal image styling within containers */
 .exhibition-image-vertical {
-  /* Vertical images always take 4 columns regardless of position */
-  grid-column: span 4;
-  object-fit: cover;
-}
-
-.exhibition-image-horizontal {
-  /* Horizontal images can have different styling if needed */
-  /* max-height: 400px; */
-  object-fit: cover;
-}
-
-/* Vertical images positioning */
-.exhibition-image-container:nth-child(3n+1).has-vertical-image .exhibition-image-vertical {
-  grid-column: 1 / 5;
-  justify-self: start;
-}
-
-.exhibition-image-container:nth-child(3n+2).has-vertical-image .exhibition-image-vertical {
   grid-column: 5 / 9;
+  grid-row: 1;
   justify-self: center;
 }
 
-.exhibition-image-container:nth-child(3n+3).has-vertical-image .exhibition-image-vertical {
-  grid-column: 9 / 13;
-  justify-self: end;
+.exhibition-image-horizontal {
+  /* Horizontal images use alternating grid placement via nth-child rules */
 }
 
-/* Vertical image captions - always align with left edge of image */
-.exhibition-image-container:nth-child(3n+1).has-vertical-image .exhibition-image-caption {
-  grid-column: 1 / 5;
-  justify-self: start;
-}
-
-.exhibition-image-container:nth-child(3n+2).has-vertical-image .exhibition-image-caption {
+/* Vertical images and captions always centered */
+.exhibition-image-container.has-vertical-image .exhibition-image-caption {
   grid-column: 5 / 9;
-  justify-self: start;
-}
-
-.exhibition-image-container:nth-child(3n+3).has-vertical-image .exhibition-image-caption {
-  grid-column: 9 / 13;
+  grid-row: 2;
   justify-self: start;
 }
 
@@ -363,53 +442,300 @@ nav {
   color: var(--text-color-primary);
 }
 
+/* Image Carousel */
 
-/* Info Page */
-
-.info-container {
-  grid-column: 1 / -1;
-  display: grid;
-  height: 100vh;
-  grid-template-columns: repeat(12, 1fr);
+.image-carousel {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background-color: var(--background-color);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
 }
 
-/* .info-contact {
-  display: flex;
-  flex-direction: column;
-  grid-column: 8 / -1;
-  grid-row: 1 / 2;
-  border: 1px solid red;
-} */
+.image-carousel.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
 
-.info-image {
+.image-carousel-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  align-items: center;
+  padding: 1rem 0;
+  pointer-events: none;
+}
+
+.image-carousel-count {
+  grid-column: 1 / 3;
+  padding-left: 1rem;
+  margin: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.image-carousel-close {
+  grid-column: 12;
+  justify-self: end;
+  padding-right: 1rem;
+  pointer-events: auto;
+}
+
+.image-carousel-viewport {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  cursor: default;
+}
+
+.image-carousel-viewport.is-prev,
+.image-carousel-viewport.is-next {
+  cursor: pointer;
+}
+
+.image-carousel-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.45s ease;
+}
+
+.image-carousel-slide {
+  flex: 0 0 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0;
+  min-height: 0;
+}
+
+.image-carousel-image-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.image-carousel-image {
+  display: block;
+  object-fit: contain;
+}
+
+.image-carousel-image-horizontal {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 100%;
+}
+
+.image-carousel-image-vertical {
+  height: 100% !important;
+  width: auto !important;
+  max-width: 100%;
+}
+
+.image-carousel-cursor-nav {
+  position: fixed;
+  z-index: 4;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  color: var(--text-color-primary);
+  font-family: var(--font-romRegular), sans-serif;
+  font-size: inherit;
+  font-weight: inherit;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .image-carousel-cursor-nav {
+    display: none;
+  }
+}
+
+.fade-in-scroll {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.fade-in-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in-scroll {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+
+/* Info Overlay */
+
+.info-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  z-index: 900;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.info-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.info-overlay-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.info-overlay-tint-layer {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(254, 251, 240, 0);
+  transition: background-color 0.35s ease;
+}
+
+.info-overlay.is-open .info-overlay-tint-layer {
+  background-color: rgba(254, 251, 240, 0.8);
+}
+
+body.info-overlay-open main,
+body.info-overlay-open .exhibitions-list-container,
+body.info-overlay-open .homepage-container {
+  filter: blur(22px);
+  transition: filter 0.35s ease;
+}
+
+.info-overlay-content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  width: 100%;
+  height: 100%;
+  padding: 5rem 0 2rem;
+  align-content: center;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.35s ease 0.03s, transform 0.35s ease 0.03s;
+}
+
+.info-overlay.is-open .info-overlay-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.info-overlay-image {
   grid-column: 2 / 6;
   width: 100%;
   height: auto;
-  display: block; /* Removes any inline spacing issues */
+  display: block;
   margin: auto 0;
 }
 
-.info-text {
+.info-overlay-text {
   grid-column: 7 / 12;
   margin: auto 0;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  padding-right: 1rem;
+}
+
+.info-overlay-text p {
+  line-height: 1.5;
+}
+
+.info-overlay-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.info-overlay-contact a {
+  color: var(--text-color-primary);
+  text-decoration: none;
+}
+
+.info-overlay-contact a:hover {
+  opacity: 0.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .info-overlay,
+  .info-overlay-tint-layer,
+  .info-overlay-content,
+  body.info-overlay-open main,
+  body.info-overlay-open .exhibitions-list-container,
+  body.info-overlay-open .homepage-container {
+    transition: none;
+  }
+
+  .nav-scroll-blur {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: linear-gradient(
+      to bottom,
+      rgba(254, 251, 240, 0.94) 0%,
+      rgba(254, 251, 240, 0.88) 35%,
+      rgba(254, 251, 240, 0.62) 60%,
+      rgba(254, 251, 240, 0.24) 82%,
+      rgba(254, 251, 240, 0) 100%
+    );
+  }
+
+  body.info-overlay-open main,
+  body.info-overlay-open .exhibitions-list-container,
+  body.info-overlay-open .homepage-container {
+    filter: blur(16px);
+  }
+
+  .info-overlay.is-open .info-overlay-tint-layer {
+    background-color: rgba(254, 251, 240, 0.68);
+  }
+}
+
+@media (max-width: 768px) {
+  .info-overlay-content {
+    padding-top: 7rem;
+    align-content: start;
+  }
+
+  .info-overlay-image {
+    grid-column: 3 / 11;
+    margin: auto 0;
+  }
+
+  .info-overlay-text {
+    grid-column: 1 / -1;
+    padding: 3rem 1rem;
+  }
 }
 
 /* Mobile styles - 8 column grid */
 @media (max-width: 768px) {
   body {
     grid-template-columns: repeat(12, 1fr);
+  }
+
+  .page-grid-background {
     background-size: calc(100% / 6) 100%;
   }
 
   nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
     grid-column: 1 / -1;
     display: grid;
     grid-template-columns: repeat(12, 1fr);
@@ -417,11 +743,11 @@ nav {
   }
 
   h1 {
-    font-size: 2rem;
+    font-size: 1.65rem;
   }
 
   h2 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
   }
 
   .nav-logo {
@@ -451,7 +777,7 @@ nav {
   }
 
   .exhibitions-list-container h2 {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     line-height: 1.25;
   }
 
@@ -488,12 +814,26 @@ nav {
   .exhibition-detail-title-container {
     grid-column: 1 / -1;
     padding: 1rem 1rem;
-    border: 1px solid red;
+    margin-top: 110px;
+  }
+
+  .exhibition-detail-date {
+    font-size: 20px;
+    padding-top: 16px;
   }
 
   .exhibition-detail-description {
     grid-column: 1 / -1;
     padding: 1rem 1rem;
+  }
+
+  .exhibition-images {
+    margin-top: 4rem;
+  }
+
+  .exhibition-about-artists-container {
+    grid-column: 5 / -1;
+    padding: 1rem 1rem 12rem 0;
   }
 
   /* Alternating layout: left, center, right, repeat */
@@ -521,34 +861,9 @@ nav {
     grid-column: 3 / 11;
   }
 
-  /* Vertical images positioning */
-  .exhibition-image-container:nth-child(3n+1).has-vertical-image .exhibition-image-vertical {
-    grid-column: 1 / 9;
-  }
-
-  .exhibition-image-container:nth-child(3n+2).has-vertical-image .exhibition-image-vertical {
+  /* Vertical images: 4 visible columns, centered on mobile */
+  .exhibition-image-container.has-vertical-image .exhibition-image-vertical,
+  .exhibition-image-container.has-vertical-image .exhibition-image-caption {
     grid-column: 3 / 11;
-  }
-
-  .exhibition-image-container:nth-child(3n+3).has-vertical-image .exhibition-image-vertical {
-    grid-column: 5 / -1;
-  }
-
-  /* Info Page */
-
-  .info-container {
-    height: 0;
-    margin-top: 9rem;
-  }
-
-  .info-image {
-    grid-column: 3 / 11;
-    margin: auto 0;
-  }
-
-  .info-text {
-    grid-column: 1/-1;
-    grid-row: 2;
-    padding: 3rem 1rem;
   }
 }

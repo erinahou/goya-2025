@@ -1,10 +1,9 @@
 import { PortableText, type SanityDocument } from "next-sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
-import Image from "next/image";
-// import { type SanityDocument } from "next-sanity";
 import { client } from "@/sanity/client";
 import { LanguageContent } from "../../components/LanguageContent";
+import { ExhibitionImages } from "../../components/ExhibitionImages";
 
 const EXHIBITION_QUERY = `*[_type == "exhibition" && slug.current == $slug][0] {
   _id,
@@ -125,8 +124,6 @@ export default async function ExhibitionDetailPage({
     };
   }) || [];
 
-  console.log(exhibitionImages);
-
   // Helper function to format artist names with "and" between last two (English)
   function formatArtistNamesEn(names: string[]): string {
     if (!names || names.length === 0) return '';
@@ -187,25 +184,7 @@ export default async function ExhibitionDetailPage({
             />
           </div>
       </div>
-      {exhibitionImages.length > 0 && (
-        <div className="exhibition-images">
-          {exhibitionImages.map((img: any, index: number) => (
-            <div key={index}
-            className={`exhibition-image-container ${img.isVertical ? 'has-vertical-image' : ''}`}>
-              <Image
-                src={img.src}
-                alt={img.alt}
-                width={img.width}
-                height={img.height}
-                className={`exhibition-image ${img.isVertical ? 'exhibition-image-vertical' : 'exhibition-image-horizontal'}`}
-              />
-              {img.captionEn && (
-                <p className="exhibition-image-caption">{img.captionEn}</p>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+      {exhibitionImages.length > 0 && <ExhibitionImages images={exhibitionImages} />}
       <div className="exhibition-about-artists-container">
         <LanguageContent
           en={

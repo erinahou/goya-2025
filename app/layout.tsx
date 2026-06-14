@@ -4,6 +4,7 @@ import { Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 
 import Navbar from "./components/Navbar";
+import InfoOverlayShell from "./components/InfoOverlayShell";
 import { LanguageProvider } from "./contexts/LanguageContext";
 
 const romRegular = localFont({
@@ -40,9 +41,12 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/yakuhanjp@4.1.1/dist/css/yakuhanjp.css" />
       </head>
       <body className={`${romRegular.variable} ${romRegularItalic.variable} ${notoSansJP.variable} antialiased`}>
+        <div className="page-grid-background" aria-hidden="true" />
+        <div className="nav-scroll-blur" aria-hidden="true" />
         <LanguageProvider>
           <Navbar />
           {children}
+          <InfoOverlayShell />
         </LanguageProvider>
       </body>
     </html>

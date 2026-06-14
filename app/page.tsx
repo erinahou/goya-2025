@@ -116,7 +116,7 @@ export default async function Home() {
             </div>
         )}
         <div className="homepage-current-exhibition-text">
-          <p>Currently showing (testing braching):</p>
+          <p>Currently showing:</p>
           <p>
             {recentExhibition.titleEn}
           </p>
