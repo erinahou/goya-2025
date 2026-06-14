@@ -3,6 +3,7 @@ import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import Image from "next/image";
 import { client } from "@/sanity/client";
+import { FadeInOnScroll } from "../components/FadeInOnScroll";
 
 const ARCHIVES_QUERY = `*[_type == "archive35mm"][0] {
   images[]{
@@ -64,8 +65,10 @@ export default async function ArchivesPage() {
       {archiveImages.length > 0 && (
         <div className="exhibition-images">
           {archiveImages.map((img: any, index: number) => (
-            <div key={index}
-            className={`exhibition-image-container ${img.isVertical ? 'has-vertical-image' : ''}`}>
+            <FadeInOnScroll
+              key={index}
+              className={`exhibition-image-container ${img.isVertical ? 'has-vertical-image' : ''}`}
+            >
               <Image
                 src={img.src}
                 alt={img.alt}
@@ -76,7 +79,7 @@ export default async function ArchivesPage() {
               {img.captionEn && (
                 <p className="exhibition-image-caption">{img.captionEn}</p>
               )}
-            </div>
+            </FadeInOnScroll>
           ))}
         </div>
       )}
