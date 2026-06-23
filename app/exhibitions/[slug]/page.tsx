@@ -1,8 +1,9 @@
-import { PortableText, type SanityDocument } from "next-sanity";
+import { type SanityDocument } from "next-sanity";
 import imageUrlBuilder from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
 import { client } from "@/sanity/client";
 import { LanguageContent } from "../../components/LanguageContent";
+import { MixedLanguagePortableText } from "../../components/MixedLanguagePortableText";
 import { ExhibitionImages } from "../../components/ExhibitionImages";
 
 const EXHIBITION_QUERY = `*[_type == "exhibition" && slug.current == $slug][0] {
@@ -177,10 +178,9 @@ export default async function ExhibitionDetailPage({
         </div>
         <div className="exhibition-detail-description">
           <div className="exhibition-about">
-            <LanguageContent
-              en={<PortableText value={exhibition.descriptionEn} />}
-              jp={<PortableText value={exhibition.descriptionJa} />}
-              mixedLanguage={true}
+            <MixedLanguagePortableText
+              valueEn={exhibition.descriptionEn}
+              valueJp={exhibition.descriptionJa}
             />
           </div>
       </div>
@@ -214,7 +214,7 @@ export default async function ExhibitionDetailPage({
                           <LanguageContent
                             en={artist.description}
                             jp={artist.description}
-                            mixedLanguage={true}
+                            mixedLanguage
                           />
                         </p>
                       )}
