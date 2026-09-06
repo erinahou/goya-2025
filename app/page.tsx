@@ -75,12 +75,15 @@ export default async function Home() {
     const imageUrl = urlFor(recentExhibition.images.image);
     const actualWidth = recentExhibition.images.image?.asset?.metadata?.dimensions?.width;
     const actualHeight = recentExhibition.images.image?.asset?.metadata?.dimensions?.height;
+    const isVertical =
+      !!actualWidth && !!actualHeight && actualWidth / actualHeight < 1;
 
     exhibitionImage = {
       src: imageUrl?.url() || '',
       alt: recentExhibition.titleEn,
       width: actualWidth || 800,
-      height: actualHeight || 600
+      height: actualHeight || 600,
+      isVertical,
     };
   }
 
@@ -103,9 +106,21 @@ export default async function Home() {
         href={`/exhibitions/${recentExhibition.slug.current}`}
         className="homepage-current-exhibition-container"
       >
-      <div>
+      <div
+        className={`homepage-current-exhibition-content${
+          exhibitionImage?.isVertical
+            ? " homepage-current-exhibition-content-vertical"
+            : ""
+        }`}
+      >
         {exhibitionImage && (
-            <div className="homepage-exhibition-image">
+            <div
+              className={`homepage-exhibition-image${
+                exhibitionImage.isVertical
+                  ? " homepage-exhibition-image-vertical"
+                  : ""
+              }`}
+            >
               <Image
                 src={exhibitionImage.src}
                 alt={exhibitionImage.alt}
