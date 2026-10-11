@@ -198,10 +198,56 @@ body.image-carousel-open nav {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 100vh;
+  box-sizing: border-box;
+  min-height: 100svh;
+  max-height: 100svh;
+  padding-block: 6rem 2rem;
+  overflow: hidden;
+}
+
+.homepage-current-exhibition-container > div,
+.homepage-current-exhibition-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+  max-height: 100%;
+  width: 100%;
+}
+
+/* Shrink-wrap vertical image + caption so caption aligns to the image's left edge */
+.homepage-current-exhibition-container
+  > .homepage-current-exhibition-content-vertical {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+.homepage-exhibition-image {
+  width: 100%;
+  min-height: 0;
+}
+
+.homepage-exhibition-image-element {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.homepage-exhibition-image-vertical {
+  max-height: calc(100svh - 14rem);
+}
+
+.homepage-exhibition-image-vertical .homepage-exhibition-image-element {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: calc(100svh - 14rem);
+  object-fit: contain;
 }
 
 .homepage-current-exhibition-text {
+  flex-shrink: 0;
   padding-top: 1rem;
 }
 
@@ -766,8 +812,9 @@ body.info-overlay-open .homepage-container {
 
   /* Homepage */
   .homepage-current-exhibition-container {
-  grid-column: 3 / 11;
-  height: 100vh;
+    grid-column: 3 / 11;
+    min-height: 100svh;
+    max-height: 100svh;
   }
 
   /* Exhibitions List Page */
