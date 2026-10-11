@@ -3,7 +3,9 @@
 import Image from "next/image";
 import { Suspense, useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useLanguage } from "../contexts/LanguageContext";
 import { FadeInOnScroll } from "./FadeInOnScroll";
+import { LanguageContent } from "./LanguageContent";
 import {
   ExhibitionImageCarousel,
   type ExhibitionCarouselImage,
@@ -17,6 +19,7 @@ function ExhibitionImagesContent({ images }: ExhibitionImagesProps) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { language } = useLanguage();
 
   const openCarousel = useCallback(
     (index: number) => {
@@ -30,11 +33,13 @@ function ExhibitionImagesContent({ images }: ExhibitionImagesProps) {
   return (
     <>
       <div className="exhibition-images">
-        {images.map((img, index) => (
-          <FadeInOnScroll
-            key={index}
-            className={`exhibition-image-container ${img.isVertical ? "has-vertical-image" : ""}`}
-          >
+        {images.map((img, index) => {
+          const captionEn = img.captionEn || "";
+          const captionJa = img.captionJa || captionEn;
+          const hasCaption =
+            language === "jp" ? Boolean(captionJa) : Boolean(captionEn);
+
+          const imageButton = (
             <button
               type="button"
               className={`exhibition-image-button ${img.isVertical ? "exhibition-image-vertical" : "exhibition-image-horizontal"}`}
@@ -49,11 +54,37 @@ function ExhibitionImagesContent({ images }: ExhibitionImagesProps) {
                 className="exhibition-image"
               />
             </button>
-            {img.captionEn && (
-              <p className="exhibition-image-caption">{img.captionEn}</p>
-            )}
-          </FadeInOnScroll>
-        ))}
+          );
+
+          const caption = hasCaption ? (
+            <p className="exhibition-image-caption">
+              <LanguageContent
+                en={captionEn}
+                jp={captionJa}
+                mixedLanguage
+              />
+            </p>
+          ) : null;
+
+          return (
+            <FadeInOnScroll
+              key={index}
+              className={`exhibition-image-container ${img.isVertical ? "has-vertical-image" : ""}`}
+            >
+              {img.isVertical ? (
+                <div className="exhibition-image-vertical-stack">
+                  {imageButton}
+                  {caption}
+                </div>
+              ) : (
+                <>
+                  {imageButton}
+                  {caption}
+                </>
+              )}
+            </FadeInOnScroll>
+          );
+        })}
       </div>
       <ExhibitionImageCarousel images={images} />
     </>

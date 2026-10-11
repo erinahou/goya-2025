@@ -8,6 +8,7 @@ export type ExhibitionCarouselImage = {
   src: string;
   alt: string;
   captionEn: string;
+  captionJa: string;
   isVertical: boolean;
   width: number;
   height: number;

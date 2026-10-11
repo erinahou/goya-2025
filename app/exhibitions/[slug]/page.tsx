@@ -23,6 +23,7 @@ const EXHIBITION_QUERY = `*[_type == "exhibition" && slug.current == $slug][0] {
   },
   images[]{
     captionEn,
+    captionJa,
     image{
       asset->{
         _id,
@@ -119,6 +120,7 @@ export default async function ExhibitionDetailPage({
       src: imageUrl?.url() || '', // No width/height constraints - use original
       alt: exhibition.titleEn,
       captionEn: img.captionEn || '',
+      captionJa: img.captionJa || '',
       isVertical,
       width: originalWidth,
       height: originalHeight

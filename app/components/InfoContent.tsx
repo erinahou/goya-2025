@@ -69,8 +69,10 @@ export function InfoContent() {
             goyacurtain@gmail.com
           </a>
           <a
-            href="https://www.instagram.com/goyacurtain/"
+            href="https://www.instagram.com/goya_curtain/"
             className="font-english"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Instagram
           </a>
