@@ -433,7 +433,9 @@ body.image-carousel-open nav {
   justify-self: start;
 }
 
-.exhibition-image-container:nth-child(3n+1) .exhibition-image-caption {
+/* Left-side horizontal only: slight inset looks intentional against the page edge */
+.exhibition-image-container:nth-child(3n+1):not(.has-vertical-image)
+  .exhibition-image-caption {
   grid-column: 1 / 9;
   grid-row: 2;
   justify-self: start;
@@ -450,6 +452,7 @@ body.image-carousel-open nav {
   grid-column: 5 / 13;
   grid-row: 2;
   justify-self: start;
+  padding-left: 0;
 }
 
 .exhibition-image-container:nth-child(3n+3) .exhibition-image-horizontal {
@@ -462,24 +465,33 @@ body.image-carousel-open nav {
   grid-column: 3 / 11;
   grid-row: 2;
   justify-self: start;
+  padding-left: 0;
 }
 
 /* Vertical and horizontal image styling within containers */
-.exhibition-image-vertical {
-  grid-column: 5 / 9;
-  grid-row: 1;
-  justify-self: center;
-}
-
 .exhibition-image-horizontal {
   /* Horizontal images use alternating grid placement via nth-child rules */
 }
 
-/* Vertical images and captions always centered */
-.exhibition-image-container.has-vertical-image .exhibition-image-caption {
+/* Vertical: image + caption share one centered stack so caption flushes to image edge */
+.exhibition-image-vertical-stack {
   grid-column: 5 / 9;
-  grid-row: 2;
-  justify-self: start;
+  grid-row: 1 / span 2;
+  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.exhibition-image-vertical-stack .exhibition-image-vertical {
+  width: auto;
+  max-width: 100%;
+}
+
+.exhibition-image-vertical-stack .exhibition-image-caption {
+  padding-left: 0;
+  width: 100%;
 }
 
 .exhibition-image-caption {
@@ -778,7 +790,7 @@ body.info-overlay-open .homepage-container {
   }
 
   .page-grid-background {
-    background-size: calc(100% / 6) 100%;
+    background-size: calc(100% / 4) 100%;
   }
 
   nav {
@@ -909,8 +921,7 @@ body.info-overlay-open .homepage-container {
   }
 
   /* Vertical images: 4 visible columns, centered on mobile */
-  .exhibition-image-container.has-vertical-image .exhibition-image-vertical,
-  .exhibition-image-container.has-vertical-image .exhibition-image-caption {
+  .exhibition-image-vertical-stack {
     grid-column: 3 / 11;
   }
 }
